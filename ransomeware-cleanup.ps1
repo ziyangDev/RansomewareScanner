@@ -32,12 +32,12 @@
 
 
 # ===================== 配置区（请按你的环境修改） =====================
-$Global:TenantName       = "xxx"  # for https://cstcoal.sharepoint.com/sites/$TenantName
-$Global:ClientId         = "xxxx"  # Entra App Client ID
-$Global:TenantIdOrDomain = "xxxx"  # Tenant ID
+$Global:TenantName       = "cstcoal"  # for https://cstcoal.sharepoint.com/sites/$TenantName
+$Global:ClientId         = "e9e70081-b35a-46b9-9f73-8718ae945640"  # Entra App Client ID
+$Global:TenantIdOrDomain = "920c29c4-13e8-480f-bc91-643c610ea65f"            # Tenant ID
 
 # 默认可疑扩展名（按你实际情况修改）
-$Global:DefaultBadExt = @("luQjrLbhFZ")
+$Global:DefaultBadExt = @("luQjrLbhFZ") | ForEach-Object { $_.ToLowerInvariant() }
 
 # 报表输出目录（默认当前目录 reports）
 $Global:ReportDir = Join-Path (Get-Location) "reports"
@@ -102,7 +102,7 @@ function Get-SuspiciousFiles {
 
         $hit = ($mod -ge $since) -and (
         ($BadExt -contains $ext) -or
-                ($name -match $regex)
+                ($name -match "(?i)$regex")
         )
 
         if ($hit) {
@@ -309,7 +309,7 @@ function Invoke-RansomwareCleanupTenant {
                     $target = $r.FileRef
                     if ($PSCmdlet.ShouldProcess($target, "Remove-PnPFile")) {
                         try {
-                            Remove-PnPFile -ServerRelativeUrl $r.FileRef -Force -Confirm:$false
+                            Remove-PnPFile -ServerRelativeUrl $r.FileRef -Force
                             Write-Host "Deleted: $($r.FileRef)"
                         } catch {
                             Write-Warning "FAILED delete: $($r.FileRef) -- $($_.Exception.Message)"
