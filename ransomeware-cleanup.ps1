@@ -190,7 +190,7 @@ function Invoke-RansomwareCleanup {
         $target = $r.FileRef
         if ($PSCmdlet.ShouldProcess($target, "Remove-PnPFile")) {
             try {
-                Remove-PnPFile -ServerRelativeUrl $r.FileRef -Force -Confirm:$false
+                Remove-PnPFile -ServerRelativeUrl $r.FileRef -Force
                 Write-Host "Deleted: $($r.FileRef)"
             } catch {
                 Write-Warning "FAILED delete: $($r.FileRef) -- $($_.Exception.Message)"
